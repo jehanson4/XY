@@ -56,7 +56,8 @@ public class XYViewer extends Viewer {
 	private class CListener implements ControlListener, PaintListener {
 
 		@Override
-		public void controlMoved(ControlEvent e) {}
+		public void controlMoved(ControlEvent e) {
+		}
 
 		@Override
 		public void controlResized(ControlEvent e) {
@@ -163,9 +164,11 @@ public class XYViewer extends Viewer {
 	 */
 	public void setDrawingAreaSize(int width, int height) {
 		if (!(width > 0))
-			throw new IllegalArgumentException("width=" + width + " -- must be > 0");
+			throw new IllegalArgumentException("width=" + width
+					+ " -- must be > 0");
 		if (!(height > 0))
-			throw new IllegalArgumentException("height=" + height + " -- must be > 0");
+			throw new IllegalArgumentException("height=" + height
+					+ " -- must be > 0");
 		this.fitToCanvas = false;
 		this.drawingArea.width = width;
 		this.drawingArea.height = height;
@@ -201,6 +204,11 @@ public class XYViewer extends Viewer {
 		clearRequested = true;
 		if (canvas != null && !canvas.isDisposed())
 			fixBounds();
+	}
+
+	public Rectangle getDrawingArea() {
+		return new Rectangle(drawingArea.x, drawingArea.y, drawingArea.width,
+				drawingArea.height);
 	}
 
 	public XYTransform getTransform() {
@@ -260,36 +268,39 @@ public class XYViewer extends Viewer {
 
 	protected void fixBounds() {
 		Rectangle canvasArea = canvas.getClientArea();
-		
+
 		// 1. Set drawing are size.
 		if (!fitToCanvas) {
-			// NOP: Drawing area size stays same.			
-		}
-		else if (!aspectRatioPreserved) {
+			// NOP: Drawing area size stays same.
+		} else if (!aspectRatioPreserved) {
 			// Drawing area size is canvas size less margins
-			drawingArea.width = canvasArea.width - (margins.left + margins.right);
+			drawingArea.width = canvasArea.width
+					- (margins.left + margins.right);
 			if (drawingArea.width < 1)
 				drawingArea.width = 1;
-			drawingArea.height = canvasArea.height - (margins.top+margins.bottom);
+			drawingArea.height = canvasArea.height
+					- (margins.top + margins.bottom);
 			if (drawingArea.height < 1)
 				drawingArea.height = 1;
-		}
-		else {
-			double drawingAspectRatio = (double)drawingArea.width / (double)drawingArea.height;
-			double canvasAspectRatio = (double)canvasArea.width / (double)canvasArea.height;
+		} else {
+			double drawingAspectRatio = (double) drawingArea.width
+					/ (double) drawingArea.height;
+			double canvasAspectRatio = (double) canvasArea.width
+					/ (double) canvasArea.height;
 			if (canvasAspectRatio >= drawingAspectRatio) {
 				// fit drawing area height to canvas height less margins
-				drawingArea.height = canvasArea.height - (margins.top+margins.bottom);
-				drawingArea.width = (int)(drawingAspectRatio * (double)drawingArea.height);
+				drawingArea.height = canvasArea.height
+						- (margins.top + margins.bottom);
+				drawingArea.width = (int) (drawingAspectRatio * (double) drawingArea.height);
 				if (drawingArea.height < 1)
 					drawingArea.height = 1;
 				if (drawingArea.width < 1)
 					drawingArea.width = 1;
-			}
-			else {
+			} else {
 				// fit drawing area width to canvas width less margins.
-				drawingArea.width = canvasArea.width - (margins.left + margins.right);
-				drawingArea.height = (int)((double)drawingArea.width/drawingAspectRatio);
+				drawingArea.width = canvasArea.width
+						- (margins.left + margins.right);
+				drawingArea.height = (int) ((double) drawingArea.width / drawingAspectRatio);
 				if (drawingArea.height < 1)
 					drawingArea.height = 1;
 				if (drawingArea.width < 1)
@@ -298,13 +309,15 @@ public class XYViewer extends Viewer {
 		}
 
 		// 2. Re-center drawing area.
-		drawingArea.x = canvasArea.x + (canvasArea.width - drawingArea.width)/2;
+		drawingArea.x = canvasArea.x + (canvasArea.width - drawingArea.width)
+				/ 2;
 		if (drawingArea.x < canvasArea.x)
 			drawingArea.x = canvasArea.x;
-		drawingArea.y = canvasArea.y + (canvasArea.height - drawingArea.height)/2;
+		drawingArea.y = canvasArea.y + (canvasArea.height - drawingArea.height)
+				/ 2;
 		if (drawingArea.y < canvasArea.y)
 			drawingArea.y = canvasArea.y;
-		
+
 		// 3. update the transform
 		transform.initialize(dataBounds, drawingArea);
 	}

@@ -12,6 +12,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
 import org.jehanson.xy.XYRect;
 import org.jehanson.xy.swt.XYViewer;
+import org.jehanson.xy.swt.decorators.DrawingAreaBorder;
 import org.jehanson.xy.swt.decorators.UnitSquare;
 
 /**
@@ -22,15 +23,18 @@ public class XYView extends ViewPart {
 
 	private XYViewer viewer;
 	private XYViewer.Entry unitSquareEntry;
+	private XYViewer.Entry borderEntry;
 	
 	private Action zoomIn;
 	private Action zoomOut;
 	private Action unitSquareAction;
+	private Action borderAction;
 	
 	public XYView() {
 		super();
 		this.viewer = new XYViewer();
 		this.unitSquareEntry = this.viewer.addDrawing(new UnitSquare());
+		this.borderEntry = this.viewer.addDrawing(new DrawingAreaBorder());
 	}
 
 	@Override
@@ -68,11 +72,23 @@ public class XYView extends ViewPart {
 		unitSquareAction = new Action() {
 			@Override
 			public void run() {
-				toggleUnitSquare();
+				unitSquareEntry.setEnabled(!unitSquareEntry.isEnabled());
+				viewer.refresh();
 			}
 		};
 		unitSquareAction.setText("Toggle unit square");
 		unitSquareAction.setToolTipText("Toggle unit square");
+		
+		borderAction = new Action() {
+			@Override
+			public void run() {
+				borderEntry.setEnabled(!borderEntry.isEnabled());
+				viewer.refresh();
+			}
+		};
+		borderAction.setText("Toggle drawing area border");
+		borderAction.setToolTipText("Toggle drawing area border");
+
 	}
 	
 	protected void hookContextMenu() {
@@ -93,6 +109,7 @@ public class XYView extends ViewPart {
 		// manager.add(zoomOut);
 		// manager.add(zoomIn);
 		manager.add(unitSquareAction);
+		manager.add(borderAction);
 	}
 
 	protected void contributeToActionBars() {
@@ -102,6 +119,7 @@ public class XYView extends ViewPart {
 		// menuManager.add(zoomIn);
 		// menuManager.add(new Separator());
 		menuManager.add(unitSquareAction);
+		menuManager.add(borderAction);
 
 		IToolBarManager toolbarManager = bars.getToolBarManager();
 		toolbarManager.add(zoomOut);
@@ -123,8 +141,4 @@ public class XYView extends ViewPart {
 		viewer.refresh();
 	}
 	
-	public void toggleUnitSquare() {
-		unitSquareEntry.setEnabled(!unitSquareEntry.isEnabled());
-		viewer.refresh();
-	}
 }

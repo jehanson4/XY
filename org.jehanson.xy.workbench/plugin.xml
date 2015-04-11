@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="XY"
+            id="org.jehanson.xy.workbench.view">
+      </category>
+      <view
+            name="XY View"
+            category="org.jehanson.xy.workbench.view"
+            class="org.jehanson.xy.workbench.XYView"
+            id="org.jehanson.xy.workbench.XYView">
+      </view>
+   </extension>
+
+</plugin>

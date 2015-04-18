@@ -70,6 +70,11 @@ public class XYLinearTransform implements XYTransform {
 	}
 
 	@Override
+	public XYPoint pixelToData(int x, int y) {
+		return new XYPoint((x - xOffset) / xFactor, (y - yOffset) / yFactor);
+	}
+
+	@Override
 	public XYPoint pixelToData(Point p) {
 		return new XYPoint((p.x - xOffset) / xFactor, (p.y - yOffset) / yFactor);
 	}
@@ -85,9 +90,15 @@ public class XYLinearTransform implements XYTransform {
 	}
 
 	@Override
+	public Point dataToPixel(double x, double y) {
+		return new Point((int) (x * xFactor + xOffset),
+				(int) (x * yFactor + yOffset));
+	}
+
+	@Override
 	public Point dataToPixel(XYPoint p) {
-		return new Point((int) (p.getX() * xFactor + xOffset),
-				(int) (p.getY() * yFactor + yOffset));
+		return new Point((int) (p.getX() * xFactor + xOffset), (int) (p.getY()
+				* yFactor + yOffset));
 	}
 
 }

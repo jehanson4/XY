@@ -15,6 +15,14 @@ public class XYRect {
 		this(0, 0, 0, 0);
 	}
 
+	public XYRect(XYPoint p) {
+		this(p, p);
+	}
+
+	public XYRect(XYPoint p1, XYPoint p2) {
+		this(p1.getX(), p1.getY(), p2.getX(), p2.getY());
+	}
+
 	public XYRect(double x0, double y0, double x1, double y1) {
 		if (x0 < x1) {
 			xMin = x0;
@@ -46,14 +54,6 @@ public class XYRect {
 		this.yMax = r.yMax;
 	}
 
-	public static XYRect unitSquare() {
-		return new XYRect(0, 0, 1, 1);
-	}
-
-	public XYRect over(XYPoint p) {
-		return new XYRect(p.getX(), p.getY(), p.getX(), p.getY());
-	}
-	
 	public double getXMin() {
 		return this.xMin;
 	}
@@ -68,6 +68,14 @@ public class XYRect {
 
 	public double getYMax() {
 		return this.yMax;
+	}
+
+	public double getWidth() {
+		return xMax - xMin;
+	}
+
+	public double getHeight() {
+		return yMax - yMin;
 	}
 
 	public void copyFrom(XYRect r) {
@@ -101,4 +109,31 @@ public class XYRect {
 		if (r.getYMax() > yMax)
 			yMax = r.getYMax();
 	}
+
+	/**
+	 * @return The point (xMin, yMin)
+	 */
+	public XYPoint getLocation() {
+		return new XYPoint(xMin, yMin);
+	}
+
+	/**
+	 * @param p
+	 *            The new point (xMin, yMin)
+	 */
+	public void setLocation(XYPoint p) {
+		double w = getWidth();
+		double h = getHeight();
+		xMin = p.getX();
+		xMax = xMin + w;
+		yMin = p.getY();
+		yMax = yMin + h;
+	}
+
+	@Override
+	public String toString() {
+		return "[" + XYPoint.makeString(xMin, yMin) + ", "
+				+ XYPoint.makeString(xMax, yMax) + "]";
+	}
+
 }

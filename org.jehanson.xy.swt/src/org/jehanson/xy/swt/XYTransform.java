@@ -14,10 +14,12 @@ public interface XYTransform {
 
 	public double pixelToDataX(int x);
 	public double pixelToDataY(int y);
+	public XYPoint pixelToData(int x, int y);
 	public XYPoint pixelToData(Point p);
-	
+
 	public int dataToPixelX(double x);
 	public int dataToPixelY(double y);
+	public Point dataToPixel(double x, double y);
 	public Point dataToPixel(XYPoint p);
 	
 	public void initialize(XYRect dataBounds, Rectangle pixelBounds);

@@ -22,7 +22,7 @@ public class XYViewer extends Viewer {
 	// Inner classes
 	// ==================================
 
-	public static class Entry implements XYDrawing {
+	public static class Entry {
 
 		boolean enabled;
 		final XYDrawing drawing;
@@ -45,10 +45,9 @@ public class XYViewer extends Viewer {
 			this.enabled = enabled;
 		}
 
-		@Override
-		public void drawOn(GC gc, XYViewer viewer) {
+		public void drawOn(GC gc) {
 			if (enabled)
-				drawing.drawOn(gc, viewer);
+				drawing.drawOn(gc);
 		}
 
 	}
@@ -77,7 +76,7 @@ public class XYViewer extends Viewer {
 			}
 
 			for (Entry drawing : drawings) {
-				drawing.drawOn(gc, XYViewer.this);
+				drawing.drawOn(gc);
 			}
 		}
 	}
@@ -96,7 +95,7 @@ public class XYViewer extends Viewer {
 	private boolean clearRequested;
 	private final List<Entry> drawings;
 
-	/** not used */
+	/** Not used but its existence is implied by superclass. */
 	private Object inputObj;
 
 	// ===============================
@@ -105,7 +104,7 @@ public class XYViewer extends Viewer {
 
 	public XYViewer() {
 		super();
-		this.dataBounds = XYRect.unitSquare();
+		this.dataBounds = new XYRect(0, 0, 1, 1);
 		this.transform = new XYLinearTransform();
 		this.canvas = null;
 		this.margins = new XYMargins(64, 64, 64, 64);
@@ -125,7 +124,7 @@ public class XYViewer extends Viewer {
 	// ===============================
 
 	@Override
-	public Control getControl() {
+	public Canvas getControl() {
 		return canvas;
 	}
 
@@ -250,12 +249,11 @@ public class XYViewer extends Viewer {
 	}
 
 	public Entry addDrawing(XYDrawing drawing) {
-		Entry entry = new Entry(drawing);
-		drawings.add(entry);
-		return entry;
+		return addDrawing(drawings.size(), drawing);
 	}
 
 	public Entry addDrawing(int idx, XYDrawing drawing) {
+		drawing.addedToViewer(this);
 		Entry entry = new Entry(drawing);
 		drawings.add(idx, entry);
 		return entry;
@@ -263,7 +261,9 @@ public class XYViewer extends Viewer {
 
 	public XYDrawing removeDrawing(int idx) {
 		Entry entry = drawings.remove(idx);
-		return entry.getDrawing();
+		XYDrawing drawing = entry.getDrawing();
+		drawing.removedFromViewer(this);
+		return drawing;
 	}
 
 	protected void fixBounds() {

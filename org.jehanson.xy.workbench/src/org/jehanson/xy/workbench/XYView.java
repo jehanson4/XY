@@ -13,6 +13,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.jehanson.xy.XYRect;
 import org.jehanson.xy.swt.XYViewer;
 import org.jehanson.xy.swt.decorators.DrawingAreaBorder;
+import org.jehanson.xy.swt.decorators.MouseCoordinates;
 import org.jehanson.xy.swt.decorators.UnitSquare;
 
 /**
@@ -24,17 +25,20 @@ public class XYView extends ViewPart {
 	private XYViewer viewer;
 	private XYViewer.Entry unitSquareEntry;
 	private XYViewer.Entry borderEntry;
+	private XYViewer.Entry mouseCoordsEntry;
 	
 	private Action zoomIn;
 	private Action zoomOut;
 	private Action unitSquareAction;
 	private Action borderAction;
+	private Action mouseCoordsAction;
 	
 	public XYView() {
 		super();
 		this.viewer = new XYViewer();
 		this.unitSquareEntry = this.viewer.addDrawing(new UnitSquare());
 		this.borderEntry = this.viewer.addDrawing(new DrawingAreaBorder());
+		this.mouseCoordsEntry = this.viewer.addDrawing(new MouseCoordinates());
 	}
 
 	@Override
@@ -89,6 +93,15 @@ public class XYView extends ViewPart {
 		borderAction.setText("Toggle drawing area border");
 		borderAction.setToolTipText("Toggle drawing area border");
 
+		mouseCoordsAction = new Action() {
+			@Override
+			public void run() {
+				mouseCoordsEntry.setEnabled(!mouseCoordsEntry.isEnabled());
+				viewer.refresh();
+			}
+		};
+		mouseCoordsAction.setText("Toggle display of mouse coords");
+		mouseCoordsAction.setToolTipText("Toggle display of mouse coords");
 	}
 	
 	protected void hookContextMenu() {
@@ -110,6 +123,7 @@ public class XYView extends ViewPart {
 		// manager.add(zoomIn);
 		manager.add(unitSquareAction);
 		manager.add(borderAction);
+		manager.add(mouseCoordsAction);
 	}
 
 	protected void contributeToActionBars() {
@@ -120,7 +134,8 @@ public class XYView extends ViewPart {
 		// menuManager.add(new Separator());
 		menuManager.add(unitSquareAction);
 		menuManager.add(borderAction);
-
+		menuManager.add(mouseCoordsAction);
+		
 		IToolBarManager toolbarManager = bars.getToolBarManager();
 		toolbarManager.add(zoomOut);
 		toolbarManager.add(zoomIn);

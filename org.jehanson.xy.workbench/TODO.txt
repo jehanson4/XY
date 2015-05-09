@@ -1,0 +1,23 @@
+
+Find out how some other view can locate an extant instance of XYView.
+
+PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView("viewId");
+
+Find out how some other view can create a new instance of XYView.
+
+Let any number of other views use any given XYView.
+
+Create XYViewOptions view. 
+
+Permit 1 options view to connect to 1 XYView. Have pulldown in XYView to show its options view.
+
+Define behavior when user selects "show view" on XYOptionsView.
+EMPIRICALLY, if there's already an instance open, it will not create another instance but
+	rather 'show' the extant instance.
+If there's no instance open, should create it; but what to connect it to? Subcases:
+	1. user wants it to be connected to one of set of extant XYView instances
+	2. user wants it to be connected to a view not yet created.
+So how about an XYView chooser that comes up iff it needs to be connected? w/ one of 
+	the options being 'new'. User will need info to permit correct choice. Maybe a 'name'
+	for each XYView instance? And include the name in the view's label.
+

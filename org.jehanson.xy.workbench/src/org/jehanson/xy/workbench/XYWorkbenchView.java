@@ -9,6 +9,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.jehanson.xy.XYRect;
 import org.jehanson.xy.swt.XYViewer;
@@ -20,23 +24,24 @@ import org.jehanson.xy.swt.decorators.UnitSquare;
  * 
  * @author jehanson
  */
-public class XYView extends ViewPart {
+public class XYWorkbenchView extends ViewPart {
 
-	private XYViewer viewer;
-	private XYViewer.Entry unitSquareEntry;
-	private XYViewer.Entry borderEntry;
-	private XYViewer.Entry mouseCoordsEntry;
+	/** must match what's in plugin.xml */
+	public static final String VIEW_ID = "org.jehanson.xy.workbench.view";
 	
+	private XYViewer viewer;
+	private Action showOptions;
+	
+	private XYViewer.Entry borderEntry;
+	private XYViewer.Entry mouseCoordsEntry;	
 	private Action zoomIn;
 	private Action zoomOut;
-	private Action unitSquareAction;
 	private Action borderAction;
 	private Action mouseCoordsAction;
 	
-	public XYView() {
+	public XYWorkbenchView() {
 		super();
 		this.viewer = new XYViewer();
-		this.unitSquareEntry = this.viewer.addDrawing(new UnitSquare());
 		this.borderEntry = this.viewer.addDrawing(new DrawingAreaBorder());
 		this.mouseCoordsEntry = this.viewer.addDrawing(new MouseCoordinates());
 	}
@@ -54,7 +59,22 @@ public class XYView extends ViewPart {
 		contributeToActionBars();
 	}
 
+	public XYViewer getViewer() {
+		return viewer;
+	}
+	
 	protected void makeActions() {
+		this.showOptions = new Action() {
+
+			@Override
+			public void run() {
+				String secondaryID = getViewSite().getSecondaryId();
+				XYWorkbenchOptions.showOptions(secondaryID);
+			}
+			
+		};
+		showOptions.setText("Show Options");
+		
 		zoomOut = new Action() {
 			@Override
 			public void run() {
@@ -72,16 +92,6 @@ public class XYView extends ViewPart {
 		};
 		zoomIn.setText("[+]");
 		zoomIn.setToolTipText("Zoom in");
-		
-		unitSquareAction = new Action() {
-			@Override
-			public void run() {
-				unitSquareEntry.setEnabled(!unitSquareEntry.isEnabled());
-				viewer.refresh();
-			}
-		};
-		unitSquareAction.setText("Toggle unit square");
-		unitSquareAction.setToolTipText("Toggle unit square");
 		
 		borderAction = new Action() {
 			@Override
@@ -110,7 +120,7 @@ public class XYView extends ViewPart {
 		menuMgr.addMenuListener(new IMenuListener() {
 			@Override
 			public void menuAboutToShow(IMenuManager manager) {
-				XYView.this.fillContextMenu(manager);
+				XYWorkbenchView.this.fillContextMenu(manager);
 			}
 		});
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
@@ -119,9 +129,10 @@ public class XYView extends ViewPart {
 	}
 
 	protected void fillContextMenu(IMenuManager manager) {
+		manager.add(showOptions);
+		
 		// manager.add(zoomOut);
 		// manager.add(zoomIn);
-		manager.add(unitSquareAction);
 		manager.add(borderAction);
 		manager.add(mouseCoordsAction);
 	}
@@ -129,10 +140,11 @@ public class XYView extends ViewPart {
 	protected void contributeToActionBars() {
 		IActionBars bars = getViewSite().getActionBars();
 		IMenuManager menuManager = bars.getMenuManager();
+		menuManager.add(showOptions);
+
 		// menuManager.add(zoomOut);
 		// menuManager.add(zoomIn);
 		// menuManager.add(new Separator());
-		menuManager.add(unitSquareAction);
 		menuManager.add(borderAction);
 		menuManager.add(mouseCoordsAction);
 		
@@ -154,6 +166,24 @@ public class XYView extends ViewPart {
 				);
 		viewer.setDataBounds(newBounds);
 		viewer.refresh();
+	}
+
+	public static XYWorkbenchView showView(String secondaryID) {
+		IWorkbenchPage page =
+				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+	
+		String viewID = VIEW_ID;
+		int mode = IWorkbenchPage.VIEW_CREATE; // VIEW_ACTIVATE,VIEW_VISIBLE
+	
+		try {
+			IViewPart view = page.showView(viewID, secondaryID, mode);
+			return (XYWorkbenchView)view;
+		}
+		catch (PartInitException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 }

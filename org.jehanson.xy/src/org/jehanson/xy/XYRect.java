@@ -24,26 +24,20 @@ public class XYRect {
 	}
 
 	public XYRect(double x0, double y0, double x1, double y1) {
-		if (x0 < x1) {
+		if (x0 <= x1) {
 			xMin = x0;
 			xMax = x1;
 		} else if (x0 > x1) {
 			xMin = x1;
 			xMax = x0;
-		} else {
-			xMin = x0 - 0.5;
-			xMax = x0 + 0.5;
 		}
 
-		if (y0 < y1) {
+		if (y0 <= y1) {
 			yMin = y0;
 			yMax = y1;
 		} else if (y0 > y1) {
 			yMin = y1;
 			yMax = y0;
-		} else {
-			yMin = y0 - 0.5;
-			yMax = y0 + 0.5;
 		}
 	}
 

@@ -5,13 +5,23 @@
          point="org.eclipse.ui.views">
       <category
             name="XY"
-            id="org.jehanson.xy.workbench.view">
+            id="org.jehanson.xy.workbench.category">
       </category>
       <view
+            allowMultiple="true"
+            category="org.jehanson.xy.workbench.category"
+            class="org.jehanson.xy.workbench.XYWorkbenchView"
+            id="org.jehanson.xy.workbench.view"
             name="XY View"
-            category="org.jehanson.xy.workbench.view"
-            class="org.jehanson.xy.workbench.XYView"
-            id="org.jehanson.xy.workbench.XYView">
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="true"
+            category="org.jehanson.xy.workbench.category"
+            class="org.jehanson.xy.workbench.XYWorkbenchOptions"
+            id="org.jehanson.xy.workbench.options"
+            name="XY Options"
+            restorable="true">
       </view>
    </extension>
 

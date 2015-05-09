@@ -5,15 +5,16 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.jehanson.xy.XYRect;
 
 public class XYViewer extends Viewer {
@@ -55,8 +56,7 @@ public class XYViewer extends Viewer {
 	private class CListener implements ControlListener, PaintListener {
 
 		@Override
-		public void controlMoved(ControlEvent e) {
-		}
+		public void controlMoved(ControlEvent e) {}
 
 		@Override
 		public void controlResized(ControlEvent e) {
@@ -65,34 +65,31 @@ public class XYViewer extends Viewer {
 
 		@Override
 		public void paintControl(PaintEvent e) {
-
 			final GC gc = e.gc;
-
-			if (clearRequested) {
-				// if (logger.isLoggable(Level.FINE))
-				// logger.logp(Level.FINE, clsName, mtdName, "clearing canvas");
-				gc.fillRectangle(canvas.getClientArea());
-				clearRequested = false;
-			}
-
+			final Color bg0 = gc.getBackground();
+			gc.setBackground(background);
+			gc.fillRectangle(canvas.getClientArea());
 			for (Entry drawing : drawings) {
 				drawing.drawOn(gc);
 			}
+			gc.setBackground(bg0);
 		}
 	}
 
-	// ===============================
+ 	// ===============================
 	// Variables
 	// ===============================
 
 	private final XYRect dataBounds;
 	private XYTransform transform;
 	private Canvas canvas;
+	private Color background;
+	private Color foreground;
+	
 	private final XYMargins margins;
 	private final Rectangle drawingArea;
 	private boolean fitToCanvas;
 	private boolean aspectRatioPreserved;
-	private boolean clearRequested;
 	private final List<Entry> drawings;
 
 	/** Not used but its existence is implied by superclass. */
@@ -107,14 +104,15 @@ public class XYViewer extends Viewer {
 		this.dataBounds = new XYRect(0, 0, 1, 1);
 		this.transform = new XYLinearTransform();
 		this.canvas = null;
-		this.margins = new XYMargins(64, 64, 64, 64);
+		this.background = null;
+		this.foreground = null;
+		this.margins = new XYMargins(32, 32, 32, 32);
 
 		// Initial values are important here.
-		this.drawingArea = new Rectangle(0, 0, 64, 64);
+		this.drawingArea = new Rectangle(0, 0, 32, 32);
 		this.fitToCanvas = true;
 		this.aspectRatioPreserved = true;
 
-		this.clearRequested = false;
 		this.drawings = new ArrayList<Entry>();
 		this.inputObj = null;
 	}
@@ -130,6 +128,15 @@ public class XYViewer extends Viewer {
 
 	public void createControl(Composite parent, int style) {
 		canvas = new Canvas(parent, style);
+		
+		// SOMETHING SOMEWHERE sets the canvas background to (240, 240, 240).
+		// I suspect the workbench, which likes to change background colors
+		// when things get selected/deselected. 
+		// has no effecxt: canvas.setBackgroundMode(SWT.INHERIT_NONE);
+		
+		background = canvas.getDisplay().getSystemColor(SWT.COLOR_BLACK);
+		foreground = canvas.getDisplay().getSystemColor(SWT.COLOR_WHITE);
+		canvas.setForeground(foreground);
 		CListener clistener = new CListener();
 		canvas.addControlListener(clistener);
 		canvas.addPaintListener(clistener);
@@ -163,11 +170,9 @@ public class XYViewer extends Viewer {
 	 */
 	public void setDrawingAreaSize(int width, int height) {
 		if (!(width > 0))
-			throw new IllegalArgumentException("width=" + width
-					+ " -- must be > 0");
+			throw new IllegalArgumentException("width=" + width + " -- must be > 0");
 		if (!(height > 0))
-			throw new IllegalArgumentException("height=" + height
-					+ " -- must be > 0");
+			throw new IllegalArgumentException("height=" + height + " -- must be > 0");
 		this.fitToCanvas = false;
 		this.drawingArea.width = width;
 		this.drawingArea.height = height;
@@ -200,7 +205,6 @@ public class XYViewer extends Viewer {
 
 	public void setDataBounds(XYRect newBounds) {
 		dataBounds.copyFrom(newBounds);
-		clearRequested = true;
 		if (canvas != null && !canvas.isDisposed())
 			fixBounds();
 	}
@@ -272,35 +276,36 @@ public class XYViewer extends Viewer {
 		// 1. Set drawing are size.
 		if (!fitToCanvas) {
 			// NOP: Drawing area size stays same.
-		} else if (!aspectRatioPreserved) {
+		}
+		else if (!aspectRatioPreserved) {
 			// Drawing area size is canvas size less margins
-			drawingArea.width = canvasArea.width
-					- (margins.left + margins.right);
+			drawingArea.width = canvasArea.width - (margins.left + margins.right);
 			if (drawingArea.width < 1)
 				drawingArea.width = 1;
-			drawingArea.height = canvasArea.height
-					- (margins.top + margins.bottom);
+			drawingArea.height = canvasArea.height - (margins.top + margins.bottom);
 			if (drawingArea.height < 1)
 				drawingArea.height = 1;
-		} else {
-			double drawingAspectRatio = (double) drawingArea.width
-					/ (double) drawingArea.height;
-			double canvasAspectRatio = (double) canvasArea.width
-					/ (double) canvasArea.height;
+		}
+		else {
+			double drawingAspectRatio =
+					(double) drawingArea.width / (double) drawingArea.height;
+			double canvasAspectRatio =
+					(double) canvasArea.width / (double) canvasArea.height;
 			if (canvasAspectRatio >= drawingAspectRatio) {
 				// fit drawing area height to canvas height less margins
-				drawingArea.height = canvasArea.height
-						- (margins.top + margins.bottom);
-				drawingArea.width = (int) (drawingAspectRatio * (double) drawingArea.height);
+				drawingArea.height = canvasArea.height - (margins.top + margins.bottom);
+				drawingArea.width =
+						(int) (drawingAspectRatio * (double) drawingArea.height);
 				if (drawingArea.height < 1)
 					drawingArea.height = 1;
 				if (drawingArea.width < 1)
 					drawingArea.width = 1;
-			} else {
+			}
+			else {
 				// fit drawing area width to canvas width less margins.
-				drawingArea.width = canvasArea.width
-						- (margins.left + margins.right);
-				drawingArea.height = (int) ((double) drawingArea.width / drawingAspectRatio);
+				drawingArea.width = canvasArea.width - (margins.left + margins.right);
+				drawingArea.height =
+						(int) ((double) drawingArea.width / drawingAspectRatio);
 				if (drawingArea.height < 1)
 					drawingArea.height = 1;
 				if (drawingArea.width < 1)
@@ -309,12 +314,10 @@ public class XYViewer extends Viewer {
 		}
 
 		// 2. Re-center drawing area.
-		drawingArea.x = canvasArea.x + (canvasArea.width - drawingArea.width)
-				/ 2;
+		drawingArea.x = canvasArea.x + (canvasArea.width - drawingArea.width) / 2;
 		if (drawingArea.x < canvasArea.x)
 			drawingArea.x = canvasArea.x;
-		drawingArea.y = canvasArea.y + (canvasArea.height - drawingArea.height)
-				/ 2;
+		drawingArea.y = canvasArea.y + (canvasArea.height - drawingArea.height) / 2;
 		if (drawingArea.y < canvasArea.y)
 			drawingArea.y = canvasArea.y;
 

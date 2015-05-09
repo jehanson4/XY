@@ -1,49 +1,32 @@
 package org.jehanson.xy.swt.decorators;
 
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Control;
-import org.jehanson.xy.swt.XYDrawing;
-import org.jehanson.xy.swt.XYViewer;
+import org.eclipse.swt.widgets.Canvas;
+import org.jehanson.xy.swt.XYDraggableDrawing;
 
-public class MouseCoordinates implements XYDrawing, MouseMoveListener,
-		MouseTrackListener {
+public class MouseCoordinates extends XYDraggableDrawing {
 
-	private XYViewer viewer;
-	private Control control;
 	private int mouseX;
 	private int mouseY;
 	private String text;
-	private boolean inactive;
 
 	public MouseCoordinates() {
 		super();
-		viewer = null;
-		control = null;
 		mouseX = 0;
 		mouseY = 0;
 		text = null;
-		inactive = true;
 	}
 
 	@Override
 	public void drawOn(GC gc) {
-		if (control == null)
-			setControl(viewer.getControl());
-		if (text == null)
-			text = (inactive) ? "" : viewer.getTransform()
-					.pixelToData(mouseX, mouseY).toString();
-		Rectangle r = viewer.getControl().getClientArea();
-		gc.drawText(text, r.x, r.y);
-	}
-
-	protected void setControl(Control control) {
-		this.control = control;
-		this.control.addMouseMoveListener(this);
-		this.control.addMouseTrackListener(this);
+		super.drawOn(gc);
+		if (isArmed()) {
+			if (text == null)
+				text = getViewer().getTransform().pixelToData(mouseX, mouseY).toString();
+			gc.drawText(text, getX(), getY());
+		}
 	}
 
 	@Override
@@ -51,22 +34,7 @@ public class MouseCoordinates implements XYDrawing, MouseMoveListener,
 		mouseX = e.x;
 		mouseY = e.y;
 		text = null;
-		viewer.refresh();
-	}
-
-	@Override
-	public void addedToViewer(XYViewer viewer) {
-		this.viewer = viewer;
-	}
-
-	@Override
-	public void removedFromViewer(XYViewer viewer) {
-		if (control != null) {
-			control.removeMouseMoveListener(this);
-			control.removeMouseTrackListener(this);
-			control = null;
-		}
-		this.viewer = null;
+		super.mouseMove(e);
 	}
 
 	@Override
@@ -74,20 +42,30 @@ public class MouseCoordinates implements XYDrawing, MouseMoveListener,
 		mouseX = e.x;
 		mouseY = e.y;
 		text = null;
-		inactive = false;
-		viewer.refresh();
+		super.mouseEnter(e);
 	}
 
 	@Override
 	public void mouseExit(MouseEvent e) {
 		text = null;
-		inactive = true;
-		viewer.refresh();
+		super.mouseExit(e);
 	}
 
 	@Override
-	public void mouseHover(MouseEvent e) {
-		// TODO NOP
+	public int getHeight() {
+		return 16;
+	}
+
+	@Override
+	public int getWidth() {
+		return 64;
+	}
+
+	@Override
+	protected void setControl(Canvas control) {
+		super.setControl(control);
+		Rectangle ca = control.getClientArea();
+		super.setPosition(ca.x, ca.y);
 	}
 
 }

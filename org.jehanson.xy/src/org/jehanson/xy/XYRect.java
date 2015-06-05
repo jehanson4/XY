@@ -15,6 +15,10 @@ public class XYRect {
 		this(0, 0, 0, 0);
 	}
 
+	public XYRect(double x0, double y0) {
+		this(x0, y0, x0, y0);
+	}
+	
 	public XYRect(XYPoint p) {
 		this(p, p);
 	}
@@ -111,18 +115,18 @@ public class XYRect {
 		return new XYPoint(xMin, yMin);
 	}
 
-	/**
-	 * @param p
-	 *            The new point (xMin, yMin)
-	 */
-	public void setLocation(XYPoint p) {
-		double w = getWidth();
-		double h = getHeight();
-		xMin = p.getX();
-		xMax = xMin + w;
-		yMin = p.getY();
-		yMax = yMin + h;
-	}
+//	/**
+//	 * @param p
+//	 *            The new point (xMin, yMin)
+//	 */
+//	public void setLocation(XYPoint p) {
+//		double w = getWidth();
+//		double h = getHeight();
+//		xMin = p.getX();
+//		xMax = xMin + w;
+//		yMin = p.getY();
+//		yMax = yMin + h;
+//	}
 
 	@Override
 	public String toString() {

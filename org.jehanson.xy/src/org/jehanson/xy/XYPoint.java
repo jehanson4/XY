@@ -1,6 +1,5 @@
 package org.jehanson.xy;
 
-import java.text.NumberFormat;
 
 /**
  * 
@@ -10,7 +9,7 @@ public class XYPoint {
 
 	public static final XYPoint ZERO = new XYPoint(0,0);
 	public static final XYPoint ONE = new XYPoint(1,1);
-	public static final String fmt = "(%.3g,%.3g)";
+	private static final String fmt = "(%.3g,%.3g)";
 
 	private final double x;
 	private final double y;

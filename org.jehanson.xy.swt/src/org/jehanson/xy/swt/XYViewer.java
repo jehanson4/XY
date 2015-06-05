@@ -76,7 +76,7 @@ public class XYViewer extends Viewer {
 		}
 	}
 
- 	// ===============================
+	// ===============================
 	// Variables
 	// ===============================
 
@@ -85,7 +85,7 @@ public class XYViewer extends Viewer {
 	private Canvas canvas;
 	private Color background;
 	private Color foreground;
-	
+
 	private final XYMargins margins;
 	private final Rectangle drawingArea;
 	private boolean fitToCanvas;
@@ -128,12 +128,12 @@ public class XYViewer extends Viewer {
 
 	public void createControl(Composite parent, int style) {
 		canvas = new Canvas(parent, style);
-		
+
 		// SOMETHING SOMEWHERE sets the canvas background to (240, 240, 240).
 		// I suspect the workbench, which likes to change background colors
-		// when things get selected/deselected. 
+		// when things get selected/deselected.
 		// has no effecxt: canvas.setBackgroundMode(SWT.INHERIT_NONE);
-		
+
 		background = canvas.getDisplay().getSystemColor(SWT.COLOR_BLACK);
 		foreground = canvas.getDisplay().getSystemColor(SWT.COLOR_WHITE);
 		canvas.setForeground(foreground);
@@ -220,6 +220,14 @@ public class XYViewer extends Viewer {
 
 	public void setTransform(XYTransform transform) {
 		this.transform = transform;
+	}
+
+	public Color getBackground() {
+		return this.background;
+	}
+
+	public Color getForeground() {
+		return this.foreground;
 	}
 
 	@Override

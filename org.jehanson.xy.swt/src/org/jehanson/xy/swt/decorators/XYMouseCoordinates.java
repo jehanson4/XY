@@ -6,13 +6,13 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.jehanson.xy.swt.XYDraggableDrawing;
 
-public class MouseCoordinates extends XYDraggableDrawing {
+public class XYMouseCoordinates extends XYDraggableDrawing {
 
 	private int mouseX;
 	private int mouseY;
 	private String text;
 
-	public MouseCoordinates() {
+	public XYMouseCoordinates() {
 		super();
 		mouseX = 0;
 		mouseY = 0;

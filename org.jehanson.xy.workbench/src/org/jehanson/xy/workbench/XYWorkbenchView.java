@@ -16,9 +16,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.jehanson.xy.XYRect;
 import org.jehanson.xy.swt.XYViewer;
-import org.jehanson.xy.swt.decorators.DrawingAreaBorder;
-import org.jehanson.xy.swt.decorators.MouseCoordinates;
-import org.jehanson.xy.swt.decorators.UnitSquare;
+import org.jehanson.xy.swt.decorators.XYDrawingAreaBorder;
+import org.jehanson.xy.swt.decorators.XYMouseCoordinates;
+import org.jehanson.xy.swt.decorators.XYUnitSquare;
 
 /**
  * 
@@ -42,8 +42,8 @@ public class XYWorkbenchView extends ViewPart {
 	public XYWorkbenchView() {
 		super();
 		this.viewer = new XYViewer();
-		this.borderEntry = this.viewer.addDrawing(new DrawingAreaBorder());
-		this.mouseCoordsEntry = this.viewer.addDrawing(new MouseCoordinates());
+		this.borderEntry = this.viewer.addDrawing(new XYDrawingAreaBorder());
+		this.mouseCoordsEntry = this.viewer.addDrawing(new XYMouseCoordinates());
 	}
 
 	@Override

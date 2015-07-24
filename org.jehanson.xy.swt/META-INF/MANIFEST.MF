@@ -4,8 +4,8 @@ Bundle-Name: XY graphics based on SWT
 Bundle-SymbolicName: org.jehanson.xy.swt
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: org.jehanson.xy;bundle-version="1.0.0",
+Require-Bundle: org.jehanson.xy;bundle-version="1.0.0";visibility:=reexport,
  org.eclipse.swt;visibility:=reexport,
- org.eclipse.jface;visibility:=reexport
+ org.eclipse.jface
 Export-Package: org.jehanson.xy.swt,
  org.jehanson.xy.swt.decorators

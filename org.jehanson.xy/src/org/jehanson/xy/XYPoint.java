@@ -1,14 +1,13 @@
 package org.jehanson.xy;
 
-
 /**
  * 
  * @author jehanson
  */
 public class XYPoint {
 
-	public static final XYPoint ZERO = new XYPoint(0,0);
-	public static final XYPoint ONE = new XYPoint(1,1);
+	public static final XYPoint ZERO = new XYPoint(0, 0);
+	public static final XYPoint ONE = new XYPoint(1, 1);
 	private static final String fmt = "(%.3g,%.3g)";
 
 	private final double x;
@@ -32,8 +31,8 @@ public class XYPoint {
 	public String toString() {
 		return makeString(this.x, this.y);
 	}
-	
+
 	public static String makeString(double x, double y) {
-		return String.format(fmt, x, y);
+		return String.format(fmt, Double.valueOf(x), Double.valueOf(y));
 	}
 }

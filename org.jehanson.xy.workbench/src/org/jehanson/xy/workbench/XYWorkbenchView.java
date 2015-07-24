@@ -18,7 +18,6 @@ import org.jehanson.xy.XYRect;
 import org.jehanson.xy.swt.XYViewer;
 import org.jehanson.xy.swt.decorators.XYDrawingAreaBorder;
 import org.jehanson.xy.swt.decorators.XYMouseCoordinates;
-import org.jehanson.xy.swt.decorators.XYUnitSquare;
 
 /**
  * 
